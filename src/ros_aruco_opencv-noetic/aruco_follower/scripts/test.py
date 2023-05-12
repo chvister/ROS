@@ -19,16 +19,17 @@ class FollowerRobot:
     def __init__(self):
         self.leader_pos = None
         self.follower_pos = None
-        self.a = rospy.Subscriber("/aruco_detections",ArucoDetection, self.aruco_detections_callback)
+        self.sub_aruco= rospy.Subscriber("/aruco_detections",ArucoDetection, self.aruco_detections_callback)
         self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
 
 
     def aruco_detections_callback(self, data):
+        #print(data)
         if(len(data.markers) != 0 ):
+            #print(data.markers)
             self.leader_pos = data.markers[0]
   
             
-
 
     def get_follower_pose(self):
         robot_pose = rospy.wait_for_message('/odom', Odometry)
@@ -67,7 +68,7 @@ class FollowerRobot:
     def follow_leader(self):
         if self.leader_pos is not None and self.follower_pos is not None:
             distance = math.sqrt((self.follower_pos.pose.position.x-self.leader_pos.pose.position.x)**2 + (self.follower_pos.pose.position.y -self.leader_pos.pose.position.y)**2)
-          
+            print(distance)
             if distance < 0.35:
                 return 
                 
